@@ -4,8 +4,9 @@ import {MD3DarkTheme, Provider, Text, Button, TextInput} from 'react-native-pape
 import { useEffect, useState } from 'react';
 
 
-export default Gameboard = ({ onUpdate }) => {
+export default Gameboard = ({ route }) => {
 
+    const { onUpdate } = route.params;
 
     
     const [dice, setDice] = React.useState([[0,1],[0,1],[0,1],[0,1],[0,1]]);
@@ -81,10 +82,12 @@ export default Gameboard = ({ onUpdate }) => {
         }
     }
 
-    const buttonHandler = () => { 
+    const buttonHandler = () => {
+        console.log("Score submit pressed");
         onUpdate(total);
         resetter(1);
         countTotal();
+
     }
 
 
@@ -115,8 +118,7 @@ export default Gameboard = ({ onUpdate }) => {
                 </Pressable>
                 <Button 
                     title="Submit Score"
-                    value={total} 
-                    onPress={() => buttonHandler}
+                    onPress={buttonHandler}
                 >
                     Submit Score
                 </Button>

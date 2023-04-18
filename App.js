@@ -28,36 +28,53 @@ function getOptions(){
 }
 
 export default function App() {
-  const STORAGE_KEY = "@Y_Key"
-  const [scoreData, setScoreData] = useState('initial value');
+  const [playerName, setPlayerName] = useState("")
+
+  const STORAGE_KEY = "Y_Key";
+  const [scoreData, setScoreData] = useState('');
+  const [hiScores, setHiScores] = useState('');
 
   useEffect(() => {
-    storeData(STORAGE_KEY, scoreData);
+    getData();
   }, [scoreData]);
 
-  const storeData = async (STORAGE_KEY, value) => {
+  const storeData = async () => {
     try {
-      await AsyncStorage.setItem(STORAGE_KEY, value)
+      const playerData = {
+        name: playerName,
+        time: new Date().toISOString(),
+        scoreData: scoreData
+      };
+      const sendData = JSON.stringify(playerData)
+      await AsyncStorage.setItem(STORAGE_KEY, sendData)
     } catch (e) {
       console.log('Error storing data:', e)
     }
   }
 
-  const getData = async (STORAGE_KEY) => {
+  const getData = async () => {
     try {
-      const value = await AsyncStorage.getItem(STORAGE_KEY)
+      const value = await AsyncStorage.getItem(STORAGE_KEY);
       if (value !== null) {
-        console.log('Value retrieved from storage:', value)
+        console.log('Value retrieved from storage:', value);
+        const newScores = JSON.parse(value);
+        setHiScores(newScores);
       } else {
-        console.log('No value stored under key:', STORAGE_KEY)
+        console.log('No value stored under key:', STORAGE_KEY);
       }
     } catch (e) {
-      console.log('Error retrieving data:', e)
+      console.log('Error retrieving data:', e);
     }
   }
 
   const handleScoreDataUpdate = (newData) => {
     setScoreData(newData);
+    storeData(STORAGE_KEY);
+  }
+
+  const handleDataChange = (data) => {
+    console.log('Data changed:', data);
+    setPlayerName(data);
   }
 
   return (
@@ -72,16 +89,17 @@ export default function App() {
             options={{
               tabBarStyle: { display: 'none' }
             }}
+            initialParams={{ nameChange: handleDataChange }}
           />
           <Tab.Screen 
             name="GAME"
             component={GameScreen}
-            onUpdate={handleScoreDataUpdate}
+            initialParams={{ onUpdate: handleScoreDataUpdate }}
           />
           <Tab.Screen
             name="SCORE"
             component={ScoreScreen}
-            data={scoreData}
+            initialParams={{ scores: hiScores }}
           />
         </Tab.Navigator>
       </NavigationContainer>

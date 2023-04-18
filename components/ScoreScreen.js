@@ -3,12 +3,13 @@ import { Pressable, Text, View } from "react-native";
 
 
 
-export default Scoreboard = ({ data }) => {
+export default Scoreboard = ({ route }) => {
 
+    const { scores } = route.params;
 
     return (
         <View>
-            <Text>{data}</Text>
+
         </View>
     )
 }
