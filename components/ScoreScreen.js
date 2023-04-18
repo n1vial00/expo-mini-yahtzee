@@ -3,12 +3,12 @@ import { Pressable, Text, View } from "react-native";
 
 
 
-export default Scoreboard = () => {
+export default Scoreboard = ({ data }) => {
 
 
     return (
         <View>
-            <Text>KEK</Text>
+            <Text>{data}</Text>
         </View>
     )
 }

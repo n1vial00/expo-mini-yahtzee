@@ -24,7 +24,6 @@ function getOptions(){
     tabBarStyle: {backgroundColor: MD3DarkTheme.colors.primary},
     tabBarInactiveBackgroundColor: MD3DarkTheme.colors.primaryContainer,
     tabBarActiveTintColor: MD3DarkTheme.colors.onPrimary,
-    
   };
 }
 
@@ -33,42 +32,56 @@ export default function App() {
   const [scoreData, setScoreData] = useState('initial value');
 
   useEffect(() => {
-    // Store the updated child data in AsyncStorage
     storeData(STORAGE_KEY, scoreData);
   }, [scoreData]);
 
-  const storeData = async (key, value) => {
+  const storeData = async (STORAGE_KEY, value) => {
     try {
-      await AsyncStorage.setItem(key, value)
+      await AsyncStorage.setItem(STORAGE_KEY, value)
     } catch (e) {
       console.log('Error storing data:', e)
     }
   }
 
+  const getData = async (STORAGE_KEY) => {
+    try {
+      const value = await AsyncStorage.getItem(STORAGE_KEY)
+      if (value !== null) {
+        console.log('Value retrieved from storage:', value)
+      } else {
+        console.log('No value stored under key:', STORAGE_KEY)
+      }
+    } catch (e) {
+      console.log('Error retrieving data:', e)
+    }
+  }
+
   const handleScoreDataUpdate = (newData) => {
-    // Update the child data state when it changes
     setScoreData(newData);
   }
 
   return (
       <NavigationContainer>
-        <Tab.Navigator screenOptions={getOptions} sceneContainerStyle={{ backgroundColor: 'black' }}>
+        <Tab.Navigator 
+          screenOptions={getOptions} 
+          sceneContainerStyle={{ backgroundColor: 'black' }}
+        >
           <Tab.Screen  
             name="HOME"
             component={HomeScreen}
-            STORAGE_KEY={STORAGE_KEY}
+            options={{
+              tabBarStyle: { display: 'none' }
+            }}
           />
           <Tab.Screen 
             name="GAME"
             component={GameScreen}
-            STORAGE_KEY={STORAGE_KEY}
-            data={scoreData}
             onUpdate={handleScoreDataUpdate}
           />
           <Tab.Screen
             name="SCORE"
             component={ScoreScreen}
-            STORAGE_KEY={STORAGE_KEY}
+            data={scoreData}
           />
         </Tab.Navigator>
       </NavigationContainer>

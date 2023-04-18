@@ -1,15 +1,17 @@
 import React from "react";
 import { Pressable, View } from "react-native";
 import {MD3DarkTheme, Provider, Text, Button, TextInput} from 'react-native-paper';
+import { useEffect, useState } from 'react';
 
 
-export default Gameboard = () => {
+export default Gameboard = ({ onUpdate }) => {
 
 
     
     const [dice, setDice] = React.useState([[0,1],[0,1],[0,1],[0,1],[0,1]]);
     const [throws, setThrows] = React.useState(3);
     const [scores, setScores] = React.useState([[0,1],[0,1],[0,1],[0,1],[0,1],[0,1]]);
+    const [total, setTotal] = useState(0);
 
     const getRandomNumber = () => {
         const freshScores = [...scores];
@@ -25,6 +27,7 @@ export default Gameboard = () => {
                 const newDice = [...dice];
                 newDice[i][0] = randomNumber;
                 setDice(newDice);
+                setThrows(throws - 1);
             }
             if(scores[dice[i][0]-1][1] == 1) {
                 const newScores = freshScores;
@@ -32,7 +35,19 @@ export default Gameboard = () => {
                 setScores(newScores);
             }
         }
-        setThrows(throws - 1);
+        
+    }
+
+    const countTotal = () => {
+        setTotal(0);
+        for(i = 0; i <=5; i++) {
+            if(scores[i][1] == 0) {
+                setTotal(total + (scores[i][0] * (i+1)));
+            }
+        }
+        if(total >= 63) {
+            setTotal(total + 50);
+        }
     }
 
     const toggleState = (num, state) => {
@@ -55,7 +70,21 @@ export default Gameboard = () => {
             }
             setScores(newScores);
             setThrows(3);
+            countTotal();
+            resetter(0);
         }
+    }
+    const resetter = (i) => {
+        setDice([[0,1],[0,1],[0,1],[0,1],[0,1]]);
+        if(i == 1) {
+            setScores([[0,1],[0,1],[0,1],[0,1],[0,1],[0,1]]);
+        }
+    }
+
+    const buttonHandler = () => { 
+        onUpdate(total);
+        resetter(1);
+        countTotal();
     }
 
 
@@ -84,6 +113,13 @@ export default Gameboard = () => {
                 <Pressable onPress={() => getRandomNumber()}>
                     <Text>ROLL</Text>
                 </Pressable>
+                <Button 
+                    title="Submit Score"
+                    value={total} 
+                    onPress={() => buttonHandler}
+                >
+                    Submit Score
+                </Button>
             </View>
         </Provider>
     )

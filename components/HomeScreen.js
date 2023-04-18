@@ -11,7 +11,7 @@ export default HomeScreen = ({ data, onUpdate }) => {
         <Provider theme={MD3DarkTheme}>
             <View>
                 <Text>Who's Playing?</Text>
-                <TextInput style={Styles.formComponent} mode='outlined' label='Player Name' value={playerName} onChangeText={t=> setPlayerName(t)}/>
+                <TextInput mode='outlined' label='Player Name' value={playerName} onChangeText={t=> setPlayerName(t)}/>
                 <Button>Submit</Button>
                 <Text>{playerName}</Text>
                 <Text>{data}</Text>
