@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import HomeScreen from './components/HomeScreen';
+import RulesScreen from './components/RulesScreen';
 import GameScreen from './components/GameScreen';
 import ScoreScreen from './components/ScoreScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -11,13 +12,7 @@ import Styles from './styles/Styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-
-
-
-
 const Tab = createBottomTabNavigator();
-
-
 
 function getOptions(){
   return {
@@ -28,48 +23,49 @@ function getOptions(){
 }
 
 export default function App() {
-  const [playerName, setPlayerName] = useState("")
-
+  const [playerName, setPlayerName] = useState("");
+  const [scoreData, setScoreData] = useState(0);
+  
   const STORAGE_KEY = "Y_Key";
-  const [scoreData, setScoreData] = useState('');
-  const [hiScores, setHiScores] = useState('');
+  // Rule values:
+  const NBR_OF_DICES = 5;
+  const NBR_OF_THROWS = 3;
+  const MIN_SPOT = 1;
+  const MAX_SPOT = 6;
+  const BONUS_POINTS_LIMIT = 63;
+  const BONUS_POINTS = 50;
 
   useEffect(() => {
-    getData();
+    storeData();
   }, [scoreData]);
 
   const storeData = async () => {
+    console.log("Starting storing");
+    console.log("Checked scoreData to be: " + scoreData);
+    console.log("Checked newData to be: " + scoreData);
     try {
+      const existingData = await AsyncStorage.getItem(STORAGE_KEY);
+      let data = /*existingData ? JSON.parse(existingData) : */ [];
+      console.log("Got data: " + data);
       const playerData = {
         name: playerName,
         time: new Date().toISOString(),
         scoreData: scoreData
       };
-      const sendData = JSON.stringify(playerData)
+      data.push(playerData);
+      const sendData = JSON.stringify(data);
+      console.log(playerData);
       await AsyncStorage.setItem(STORAGE_KEY, sendData)
     } catch (e) {
       console.log('Error storing data:', e)
     }
   }
 
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem(STORAGE_KEY);
-      if (value !== null) {
-        console.log('Value retrieved from storage:', value);
-        const newScores = JSON.parse(value);
-        setHiScores(newScores);
-      } else {
-        console.log('No value stored under key:', STORAGE_KEY);
-      }
-    } catch (e) {
-      console.log('Error retrieving data:', e);
-    }
-  }
-
   const handleScoreDataUpdate = (newData) => {
-    setScoreData(newData);
-    storeData(STORAGE_KEY);
+    const pulledData = newData;
+    setScoreData(pulledData);
+    console.log("Starting storing. newData: " + pulledData);
+
   }
 
   const handleDataChange = (data) => {
@@ -91,17 +87,33 @@ export default function App() {
             }}
             initialParams={{ nameChange: handleDataChange }}
           />
-          <Tab.Screen 
-            name="GAME"
-            component={GameScreen}
-            initialParams={{ onUpdate: handleScoreDataUpdate }}
+          <Tab.Screen  
+            name="RULES"
+            component={RulesScreen}
+            options={{
+              tabBarButton: (props) => null,
+              tabBarStyle: { display: 'none' }
+            }}
+            initialParams={{
+              NBR_OF_DICES: NBR_OF_DICES,
+              NBR_OF_THROWS: NBR_OF_THROWS,
+              MIN_SPOT:MIN_SPOT,
+              MAX_SPOT: MAX_SPOT,
+              BONUS_POINTS_LIMIT: BONUS_POINTS_LIMIT,
+              BONUS_POINTS: BONUS_POINTS
+            }}
           />
+          <Tab.Screen name="GAME">
+          {() => <GameScreen onUpdate = {handleScoreDataUpdate} />}
+          </Tab.Screen>
           <Tab.Screen
             name="SCORE"
             component={ScoreScreen}
-            initialParams={{ scores: hiScores }}
+            initialParams={{ scores: scoreData }}
           />
         </Tab.Navigator>
       </NavigationContainer>
   );
 }
+
+

@@ -4,11 +4,8 @@ import {MD3DarkTheme, Provider, Text, Button, TextInput} from 'react-native-pape
 import { useEffect, useState } from 'react';
 
 
-export default Gameboard = ({ route }) => {
+export default Gameboard = (props) => {
 
-    const { onUpdate } = route.params;
-
-    
     const [dice, setDice] = React.useState([[0,1],[0,1],[0,1],[0,1],[0,1]]);
     const [throws, setThrows] = React.useState(3);
     const [scores, setScores] = React.useState([[0,1],[0,1],[0,1],[0,1],[0,1],[0,1]]);
@@ -40,16 +37,17 @@ export default Gameboard = ({ route }) => {
     }
 
     const countTotal = () => {
-        setTotal(0);
-        for(i = 0; i <=5; i++) {
-            if(scores[i][1] == 0) {
-                setTotal(total + (scores[i][0] * (i+1)));
-            }
+        let calculatedTotal = 0;
+        for (let i = 0; i <= 5; i++) {
+          if (scores[i][1] == 0) {
+            calculatedTotal += scores[i][0] * (i + 1);
+          }
         }
-        if(total >= 63) {
-            setTotal(total + 50);
+        if (calculatedTotal >= 63) {
+          calculatedTotal += 50;
         }
-    }
+        setTotal(calculatedTotal);
+      }
 
     const toggleState = (num, state) => {
         if(state == 1) {
@@ -70,24 +68,23 @@ export default Gameboard = ({ route }) => {
                 }
             }
             setScores(newScores);
-            setThrows(3);
-            countTotal();
             resetter(0);
         }
     }
     const resetter = (i) => {
         setDice([[0,1],[0,1],[0,1],[0,1],[0,1]]);
+        setThrows(3);
         if(i == 1) {
             setScores([[0,1],[0,1],[0,1],[0,1],[0,1],[0,1]]);
+            setTotal(0);
         }
+        countTotal();
     }
 
     const buttonHandler = () => {
         console.log("Score submit pressed");
-        onUpdate(total);
+        props.onUpdate(total);
         resetter(1);
-        countTotal();
-
     }
 
 
@@ -122,6 +119,7 @@ export default Gameboard = ({ route }) => {
                 >
                     Submit Score
                 </Button>
+                <Text>{total}</Text>
             </View>
         </Provider>
     )
