@@ -6,12 +6,34 @@ import { useEffect, useState } from 'react';
 
 export default Gameboard = ({ route }) => {
 
-    const { onUpdate } = route.params;
 
+    useEffect(() => {
+        const createdDice = [...dice];
+
+        for (i = 0; i < route.params.NBR_OF_DICES; i++) {
+            createdDice.push([0,1]);
+        }
+        
+        setDice(createdDice);
     
-    const [dice, setDice] = React.useState([[0,1],[0,1],[0,1],[0,1],[0,1]]);
-    const [throws, setThrows] = React.useState(3);
-    const [scores, setScores] = React.useState([[0,1],[0,1],[0,1],[0,1],[0,1],[0,1]]);
+        
+        const createdScores = [...scores];
+    
+        for (i = route.params.MIN_SPOT; i <= route.params.MAX_SPOT; i++) {
+            createdScores.push([i,0,1]);
+        }
+    
+        setScores(createdScores);
+    
+        
+        
+    }, [])
+    
+
+
+    const [dice, setDice] = React.useState([]);
+    const [throws, setThrows] = React.useState(route.params.NBR_OF_THROWS);
+    const [scores, setScores] = React.useState([]);
     const [total, setTotal] = useState(0);
 
     const getRandomNumber = () => {
@@ -40,15 +62,16 @@ export default Gameboard = ({ route }) => {
     }
 
     const countTotal = () => {
-        setTotal(0);
+        let newTotal = 0;
         for(i = 0; i <=5; i++) {
             if(scores[i][1] == 0) {
-                setTotal(total + (scores[i][0] * (i+1)));
+                newTotal += scores[i][0] * (i+1);
             }
         }
-        if(total >= 63) {
-            setTotal(total + 50);
+        if(newTotal >= 63) {
+            newTotal += 50;
         }
+        setTotal(newTotal);
     }
 
     const toggleState = (num, state) => {
@@ -76,7 +99,7 @@ export default Gameboard = ({ route }) => {
         }
     }
     const resetter = (i) => {
-        setDice([[0,1],[0,1],[0,1],[0,1],[0,1]]);
+        setDice([createdDice]);
         if(i == 1) {
             setScores([[0,1],[0,1],[0,1],[0,1],[0,1],[0,1]]);
         }
@@ -84,7 +107,7 @@ export default Gameboard = ({ route }) => {
 
     const buttonHandler = () => {
         console.log("Score submit pressed");
-        onUpdate(total);
+        route.params.onUpdate(total);
         resetter(1);
         countTotal();
 
