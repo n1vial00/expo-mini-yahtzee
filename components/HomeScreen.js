@@ -6,11 +6,12 @@ import Styles from '../styles/Styles';
 
 export default HomeScreen = ({ route, navigation }) => {
     const [playerName, setPlayerName] = useState("")
+    const { nameChange } = route.params;
     
     const handlePlayerChange = () => {
-        route.params.nameChange(playerName);
+        nameChange(playerName);
         console.log(playerName);
-        navigation.navigate("RULES")
+        navigation.navigate("GAME")
       }
 
     return (
