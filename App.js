@@ -25,7 +25,10 @@ function getOptions(){
 export default function App() {
   const [playerName, setPlayerName] = useState("");
   const [scoreData, setScoreData] = useState(0);
-  
+  const [hiscores, setHiscores] = useState([]);
+  const [scoreScreenKey, setScoreScreenKey] = useState(0);
+
+
   const STORAGE_KEY = "Y_Key";
   // Rule values:
   const NBR_OF_DICES = 5;
@@ -36,28 +39,53 @@ export default function App() {
   const BONUS_POINTS = 50;
 
   useEffect(() => {
-    storeData();
+    if(scoreData > 0) {
+      storeData();
+    }
+    getScores();
+    setScoreScreenKey(scoreScreenKey + 1);
   }, [scoreData]);
 
+  
+
   const storeData = async () => {
-    console.log("Starting storing");
-    console.log("Checked scoreData to be: " + scoreData);
-    console.log("Checked newData to be: " + scoreData);
     try {
       const existingData = await AsyncStorage.getItem(STORAGE_KEY);
-      let data = /*existingData ? JSON.parse(existingData) : */ [];
+      let data = existingData ? JSON.parse(existingData) : [];
       console.log("Got data: " + data);
+
       const playerData = {
         name: playerName,
         time: new Date().toISOString(),
         scoreData: scoreData
       };
       data.push(playerData);
+
+      data.sort((a, b) => b.scoreData - a.scoreData);
+      
+      if (data.length > 10) {
+        data.pop();
+      }
       const sendData = JSON.stringify(data);
-      console.log(playerData);
+      console.log(sendData);
       await AsyncStorage.setItem(STORAGE_KEY, sendData)
     } catch (e) {
       console.log('Error storing data:', e)
+    }
+  }
+
+  const getScores = async () => {
+    try {
+      const value = await AsyncStorage.getItem(STORAGE_KEY);
+      if (value !== null) {
+        console.log('Value retrieved from storage:', value);
+        const newScores = JSON.parse(value);
+        setHiscores(newScores);
+      } else {
+        console.log('No value stored under key:', STORAGE_KEY);
+      }
+    } catch (e) {
+      console.log('Error retrieving data:', e);
     }
   }
 
@@ -106,11 +134,9 @@ export default function App() {
           <Tab.Screen name="GAME">
           {() => <GameScreen onUpdate = {handleScoreDataUpdate} />}
           </Tab.Screen>
-          <Tab.Screen
-            name="SCORE"
-            component={ScoreScreen}
-            initialParams={{ scores: scoreData }}
-          />
+          <Tab.Screen name="SCORE">
+          {() => <ScoreScreen key= {scoreScreenKey} scores= {hiscores} />}
+          </Tab.Screen>
         </Tab.Navigator>
       </NavigationContainer>
   );
