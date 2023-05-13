@@ -2,13 +2,13 @@ import { Provider, Text, MD3DarkTheme } from 'react-native-paper';
 import { View } from 'react-native';
 import Styles from '../styles/Styles';
 
-const ScoreScreen = (props) => {
+const ScoreScreen = ({scores}) => {
   return (
     <Provider theme={MD3DarkTheme}>
       <View style={Styles.mainContainer}>
         <Text style={Styles.top}>TOP 10 PLAYERS!</Text>
         <Text>Player - Score</Text>
-        {props.scores?.map((score, j) => (
+        {scores?.map((score, j) => (
           <Text key={j}>
             {score.name} - {score.scoreData}
           </Text>

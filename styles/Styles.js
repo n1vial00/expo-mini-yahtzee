@@ -41,5 +41,8 @@ export default StyleSheet.create({
     },
     input:{
         width: 300,
+    },
+    notification:{
+        backgroundColor: "purple",
     }
 });

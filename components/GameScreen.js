@@ -12,6 +12,7 @@ export default Gameboard = (props) => {
     const [throws, setThrows] = React.useState(3);
     const [scores, setScores] = React.useState([[0,1],[0,1],[0,1],[0,1],[0,1],[0,1]]);
     const [total, setTotal] = useState(0);
+    const [notification, setNotification] = useState("");
 
     const getRandomNumber = () => {
         const freshScores = [...scores];
@@ -35,7 +36,7 @@ export default Gameboard = (props) => {
                 setScores(newScores);
             }
         }
-        
+        setNotification("");
     }
 
     const countTotal = () => {
@@ -51,17 +52,16 @@ export default Gameboard = (props) => {
         setTotal(calculatedTotal);
       }
 
-    const toggleState = (num, state) => {
+    const toggleState = (num, state, unlocked) => {
         if(state == 1) {
             const newDice = [...dice];
-            
             if(newDice[num][1] == 1) {
-                newDice[num][1] = 0
+                newDice[num][1] = 0;
             } else {
-                newDice[num][1] = 1
+                newDice[num][1] = 1;
             }
             setDice(newDice);
-        } else if(state == 2) {
+        } else if(state === 2 && unlocked == 1) {
             const newScores = [...scores];
             newScores[num][1] = 0;
             for(i = 0; i <=5; i++) {
@@ -71,6 +71,8 @@ export default Gameboard = (props) => {
             }
             setScores(newScores);
             resetter(0);
+        } else {
+            setNotification("Illegal move! Are you out of moves?");
         }
     }
     const resetter = (i) => {
@@ -84,15 +86,18 @@ export default Gameboard = (props) => {
     }
 
     const buttonHandler = () => {
-        console.log("Score submit pressed");
         props.onUpdate(total);
         resetter(1);
+        setNotification("Score submitted!");
     }
 
 
     return (
         <Provider theme={MD3DarkTheme}>
             <View style={Styles.mainContainer}>
+                <Text style={Styles.notification}>
+                    {notification}
+                </Text>
                 <View style={Styles.container}>
                     {/* Dice */}
                     {dice[0][0] > 0 ?dice.map((die, i) => (
@@ -115,7 +120,7 @@ export default Gameboard = (props) => {
                 </View>
                 <View style={Styles.container}>
                     {scores?.map((score, j) => (
-                        <Pressable key={j} onPress={() => toggleState(j, 2)}>
+                        <Pressable key={j} onPress={() => toggleState(j, 2, score[1])}>
                             <Text style={Styles.text}>
                                 {score[0] * (j + 1)}
                             </Text>

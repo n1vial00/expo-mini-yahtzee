@@ -8,7 +8,6 @@ import ScoreScreen from './components/ScoreScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import {MD3DarkTheme, Provider, Text, Button, TextInput} from 'react-native-paper';
-import Styles from './styles/Styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
@@ -46,8 +45,6 @@ export default function App() {
     getScores();
     setScoreScreenKey(scoreScreenKey + 1);
   }, [scoreData]);
-
-  
 
   const storeData = async () => {
     try {
@@ -93,8 +90,6 @@ export default function App() {
   const handleScoreDataUpdate = (newData) => {
     const pulledData = newData;
     setScoreData(pulledData);
-    console.log("Starting storing. newData: " + pulledData);
-
   }
 
   const handleDataChange = (data) => {
@@ -159,5 +154,3 @@ export default function App() {
       </NavigationContainer>
   );
 }
-
-
