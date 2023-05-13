@@ -88,7 +88,7 @@ export default Gameboard = (props) => {
     const buttonHandler = () => {
         props.onUpdate(total);
         resetter(1);
-        setNotification("Score submitted!");
+        setNotification("Score submitted! Roll again to start a new game!");
     }
 
 

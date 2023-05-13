@@ -50,8 +50,6 @@ export default function App() {
     try {
       const existingData = await AsyncStorage.getItem(STORAGE_KEY);
       let data = existingData ? JSON.parse(existingData) : [];
-      console.log("Got data: " + data);
-
       const playerData = {
         name: playerName,
         time: new Date().toISOString(),
@@ -65,7 +63,6 @@ export default function App() {
         data.pop();
       }
       const sendData = JSON.stringify(data);
-      console.log(sendData);
       await AsyncStorage.setItem(STORAGE_KEY, sendData)
     } catch (e) {
       console.log('Error storing data:', e)
@@ -93,7 +90,6 @@ export default function App() {
   }
 
   const handleDataChange = (data) => {
-    console.log('Data changed:', data);
     setPlayerName(data);
   }
 
