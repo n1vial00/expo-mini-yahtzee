@@ -10,6 +10,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import {MD3DarkTheme, Provider, Text, Button, TextInput} from 'react-native-paper';
 import Styles from './styles/Styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 
 const Tab = createBottomTabNavigator();
@@ -111,7 +112,10 @@ export default function App() {
             name="HOME"
             component={HomeScreen}
             options={{
-              tabBarStyle: { display: 'none' }
+              tabBarStyle: { display: 'none' },
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons name="home" color={color} size={size} />
+              ),
             }}
             initialParams={{ nameChange: handleDataChange }}
           />
@@ -131,10 +135,24 @@ export default function App() {
               BONUS_POINTS: BONUS_POINTS
             }}
           />
-          <Tab.Screen name="GAME">
+          <Tab.Screen 
+            name="GAME"
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons name="dice-multiple" color={color} size={size} />
+              ),
+            }}
+          >
           {() => <GameScreen onUpdate = {handleScoreDataUpdate} />}
           </Tab.Screen>
-          <Tab.Screen name="SCORE">
+          <Tab.Screen 
+            name="SCORE"
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons name="trophy" color={color} size={size} />
+              ),
+            }}
+          >
           {() => <ScoreScreen key= {scoreScreenKey} scores= {hiscores} />}
           </Tab.Screen>
         </Tab.Navigator>

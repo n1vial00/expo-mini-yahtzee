@@ -1,7 +1,9 @@
 import React from "react";
 import { Pressable, View } from "react-native";
-import {MD3DarkTheme, Provider, Text, Button, TextInput} from 'react-native-paper';
-import { useEffect, useState } from 'react';
+import {MD3DarkTheme, Provider, Text, Button} from 'react-native-paper';
+import { useState } from 'react';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Styles from '../styles/Styles';
 
 
 export default Gameboard = (props) => {
@@ -90,29 +92,48 @@ export default Gameboard = (props) => {
 
     return (
         <Provider theme={MD3DarkTheme}>
-            <View>
-                {/* Dice */}
-                {dice.map((die, i) => (
-                    <Pressable key={i} onPress={() => toggleState(i, 1)}>
-                        <Text>
-                            Die values: {die[0]} {die[1]}
-                        </Text>
+            <View style={Styles.mainContainer}>
+                <View style={Styles.container}>
+                    {/* Dice */}
+                    {dice[0][0] > 0 ?dice.map((die, i) => (
+                        <Pressable key={i} onPress={() => toggleState(i, 1)}>
+                            <MaterialCommunityIcons
+                                name={"dice-" + (die[0])}
+                                size={50} 
+                                color={die[1] == 0 ? "orange" : "steelblue"}
+                            >
+                            </MaterialCommunityIcons>
+                        </Pressable>
+                    )) : 
+                        <MaterialCommunityIcons
+                                name={"dice-multiple"}
+                                size={50} 
+                                color={"steelblue"}
+                        > 
+                        </MaterialCommunityIcons>
+                    }
+                </View>
+                <View style={Styles.container}>
+                    {scores?.map((score, j) => (
+                        <Pressable key={j} onPress={() => toggleState(j, 2)}>
+                            <Text style={Styles.text}>
+                                {score[0] * (j + 1)}
+                            </Text>
+                            <MaterialCommunityIcons
+                                name={"numeric-" + (j+1) + "-circle"}
+                                size={50} 
+                                color={score[1] == 0 ? "orange" : "steelblue"}
+                            >
+                            </MaterialCommunityIcons>
+                        </Pressable>
+                    ))}
+                </View>
+                <Text style={Styles.text}>Number of throws left: {throws}</Text>
+                <View style={Styles.container}>
+                    <Pressable style={Styles.button} onPress={() => getRandomNumber()}>
+                        <Text style={Styles.roll}>ROLL</Text>
                     </Pressable>
-                ))}
-
-                {scores.map((score, j) => (
-                    <Pressable key={j} onPress={() => toggleState(j, 2)}>
-                        <Text>
-                            Dump score in: {j + 1} {score[0] * (j + 1)}
-                        </Text>
-                    </Pressable>
-                ))}
-
-                <Text>{throws}</Text>
-
-                <Pressable onPress={() => getRandomNumber()}>
-                    <Text>ROLL</Text>
-                </Pressable>
+                </View>
                 <Button 
                     title="Submit Score"
                     onPress={buttonHandler}

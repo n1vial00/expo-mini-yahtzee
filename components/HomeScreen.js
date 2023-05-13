@@ -14,9 +14,9 @@ export default HomeScreen = ({ route, navigation }) => {
 
     return (
         <Provider theme={MD3DarkTheme}>
-            <View>
+            <View style={Styles.mainContainer}>
                 <Text>Who's Playing?</Text>
-                <TextInput mode='outlined' label='Player Name' value={playerName} onChangeText={t=> setPlayerName(t)}/>
+                <TextInput style={Styles.input} mode='outlined' label='Player Name' value={playerName} onChangeText={t=> setPlayerName(t)}/>
                 <Button onPress={() => handlePlayerChange()}>Submit</Button>
                 <Text>{playerName}</Text>
             </View>
